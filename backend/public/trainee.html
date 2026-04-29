@@ -4,11 +4,239 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AIEIO Trainee</title>
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico" />
+    <link rel="icon" type="image/png" href="/img/AIEIOLogo.png" />
+    <link rel="stylesheet" href="/styles/app.css" />
   </head>
   <body>
-    <h1>Trainee Dashboard</h1>
-    <p id="whoami"></p>
-    <button id="logout">Logout</button>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-row">
+          <img class="brand-logo" src="/img/AIEIOLogo.png" alt="AIEIO logo" />
+          <div class="brand">
+            <h2>AIEIO Student Experience</h2>
+            <p id="whoami"></p>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn" id="logout">Logout</button>
+        </div>
+      </header>
+
+      <main class="layout">
+        <aside class="panel stack">
+          <div class="panel-header">
+            <h3>Flow Navigation</h3>
+            <p>Step-by-step student workflow and current status.</p>
+          </div>
+          <div class="panel-body stack">
+            <div class="meta-pill">Role: Student</div>
+            <div class="state-card empty">
+              <h4>1) Select Scenario</h4>
+              <p>Choose a scenario from the browser panel.</p>
+            </div>
+            <div class="state-card empty">
+              <h4>2) Draft Response</h4>
+              <p>Pick message type and tone, then draft your response.</p>
+            </div>
+            <div class="state-card empty">
+              <h4>3) Automated Assessment</h4>
+              <p>Run evaluation and optional rewrite comparison.</p>
+            </div>
+            <div class="state-card empty">
+              <h4>4) Instructor Assessment</h4>
+              <p>Submit to instructor and wait for final outcome.</p>
+            </div>
+          </div>
+        </aside>
+
+        <section class="stack">
+          <div id="dashboard-loading" class="stack">
+            <article class="panel">
+              <div class="panel-header">
+                <div class="skeleton h-22 w-45"></div>
+                <div class="skeleton h-12 w-75"></div>
+              </div>
+              <div class="panel-body grid-2">
+                <div class="skeleton-block">
+                  <div class="skeleton h-16 w-60"></div>
+                  <div class="skeleton h-90"></div>
+                  <div class="skeleton h-32 w-45"></div>
+                </div>
+                <div class="skeleton-block">
+                  <div class="skeleton h-16 w-60"></div>
+                  <div class="skeleton h-90"></div>
+                  <div class="skeleton h-32 w-45"></div>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-header">
+                <div class="skeleton h-22 w-45"></div>
+                <div class="skeleton h-12 w-90"></div>
+              </div>
+              <div class="panel-body stack">
+                <div class="skeleton h-130"></div>
+                <div class="grid-2">
+                  <div class="skeleton h-40"></div>
+                  <div class="skeleton h-40"></div>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-header">
+                <div class="skeleton h-22 w-45"></div>
+              </div>
+              <div class="panel-body grid-2">
+                <div class="skeleton-block">
+                  <div class="skeleton h-16 w-45"></div>
+                  <div class="skeleton h-56"></div>
+                </div>
+                <div class="skeleton-block">
+                  <div class="skeleton h-16 w-45"></div>
+                  <div class="skeleton h-56"></div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div id="dashboard-content" class="hidden stack">
+            <article class="panel">
+              <div class="panel-header">
+                <h3>Scenario Browser</h3>
+                <p>Browse dataset-backed and instructor custom scenarios.</p>
+              </div>
+              <div class="panel-body stack">
+                <div id="student-scenarios-state" class="state-card empty hidden">
+                  <h4>No scenarios yet</h4>
+                  <p>Try refreshing or changing filters.</p>
+                </div>
+                <div id="student-scenario-list" class="grid-2"></div>
+                <div id="student-scenario-detail" class="state-card empty">
+                  <h4>Select a scenario</h4>
+                  <p>Scenario context and source metadata will appear here.</p>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-header">
+                <h3>Message Drafting</h3>
+                <p>Compose your first response before running simulation and scoring.</p>
+              </div>
+              <div class="panel-body stack">
+                <div class="grid-2">
+                  <div>
+                    <label for="draft-mode">Message Type</label>
+                    <select id="draft-mode">
+                      <option value="press_statement">Public Statement</option>
+                      <option value="social_post">Social Post</option>
+                      <option value="interview_response">Interview Response</option>
+                      <option value="talking_points">Talking Points</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="draft-tone">Tone</label>
+                    <select id="draft-tone">
+                      <option value="calm_factual">Calm and Factual</option>
+                      <option value="empathetic_reassuring">Empathetic and Reassuring</option>
+                      <option value="firm_authoritative">Firm and Authoritative</option>
+                      <option value="transparent_briefing">Transparent Briefing</option>
+                      <option value="community_focused">Community-Focused</option>
+                    </select>
+                  </div>
+                </div>
+                <label for="draft-body">Draft Message</label>
+                <textarea id="draft-body" rows="4" placeholder="Draft workspace will be wired next."></textarea>
+                <div class="grid-2">
+                  <button id="student-evaluate-btn" class="btn primary">Run Evaluation</button>
+                  <button id="student-compare-btn" class="btn">Re-evaluate Rewrite</button>
+                </div>
+                <div class="grid-2">
+                  <button id="student-submit-btn" class="btn">Submit to Instructor</button>
+                  <button id="student-refresh-status-btn" class="btn">Refresh Instructor Status</button>
+                </div>
+                <div class="grid-2">
+                  <button id="student-audit-log-btn" class="btn">View Assessment Audit Log</button>
+                </div>
+                <p class="inline-note" id="student-action-note">Actions are in UX preview mode.</p>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-header">
+                <h3>Evaluation and Score Preview</h3>
+                <p>Audience reactions, risks, trust score, and rewrite deltas appear here.</p>
+              </div>
+              <div class="panel-body stack">
+                <div id="student-evaluation-state" class="state-card empty">
+                  <h4>No evaluation yet</h4>
+                  <p>Run an evaluation to see trust metrics, reactions, and rewrite guidance.</p>
+                </div>
+                <div id="student-evaluation-results" class="grid-2 hidden">
+                  <div class="skeleton-block">
+                    <h4>Overall Scores</h4>
+                    <div id="student-overall-scores"></div>
+                  </div>
+                  <div class="skeleton-block">
+                    <h4>Risk Findings</h4>
+                    <div id="student-risk-findings"></div>
+                  </div>
+                  <div class="skeleton-block">
+                    <h4>Audience Reactions</h4>
+                    <div id="student-persona-reactions"></div>
+                  </div>
+                  <div class="skeleton-block">
+                    <h4>Suggested Rewrite</h4>
+                    <textarea id="student-rewrite-text" rows="5" placeholder="Rewrite suggestion appears here."></textarea>
+                  </div>
+                  <div class="skeleton-block">
+                    <h4>Misinformation Spread Mini-Visual</h4>
+                    <div id="student-mini-visual" class="kv-list"></div>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-header">
+                <h3>System States and Recovery</h3>
+                <p>How the student experience handles empty, pending, and error conditions.</p>
+              </div>
+              <div class="panel-body stack">
+                <div class="state-card" id="student-instructor-status">
+                  <h4>Instructor Assessment: Not Submitted</h4>
+                  <p>Submit your response to place it in the instructor review queue.</p>
+                </div>
+                <div class="state-card empty hidden" id="student-audit-log">
+                  <h4>Assessment Audit Log</h4>
+                  <p>Assessment history will appear after submissions and grading events.</p>
+                </div>
+                <div class="state-card empty">
+                  <h4>No scenarios yet</h4>
+                  <p>No scenario is available right now. Check again or switch mode.</p>
+                  <div class="state-actions">
+                    <button class="btn" data-toast-message="Refreshed scenario list." data-toast-variant="success">Refresh Scenarios</button>
+                    <button class="btn" data-toast-message="Switched to custom scenario mode." data-toast-variant="success">Switch to Custom Mode</button>
+                  </div>
+                </div>
+                <div class="state-card error">
+                  <h4>Evaluation temporarily unavailable</h4>
+                  <p>We could not evaluate this draft. Retry or go back to editing.</p>
+                  <div class="state-actions">
+                    <button class="btn" data-toast-message="Retry requested." data-toast-variant="error">Retry Evaluation</button>
+                    <button class="btn" data-toast-message="Returned to draft editor." data-toast-variant="success">Back to Draft</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+    <div id="toast-zone" class="toast-zone" aria-live="polite"></div>
     <script type="module" src="/js/auth.js"></script>
   </body>
 </html>

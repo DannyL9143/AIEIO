@@ -77,6 +77,7 @@ export function validateMessageSubmission(body) {
   const scenarioId = asString(body?.scenarioId);
   const messageType = asString(body?.messageType);
   const messageText = asString(body?.messageText);
+  const tone = asString(body?.tone);
   const metadata = body?.metadata;
 
   if (!["student", "instructor"].includes(role)) {
@@ -99,6 +100,18 @@ export function validateMessageSubmission(body) {
     return { valid: false, error: "messageText is required." };
   }
 
+  if (
+    ![
+      "calm_factual",
+      "empathetic_reassuring",
+      "firm_authoritative",
+      "transparent_briefing",
+      "community_focused"
+    ].includes(tone)
+  ) {
+    return { valid: false, error: "tone is invalid." };
+  }
+
   if (!isObject(metadata)) {
     return { valid: false, error: "metadata object is required." };
   }
@@ -110,6 +123,7 @@ export function validateMessageSubmission(body) {
       scenarioId,
       messageType,
       messageText,
+      tone,
       metadata: {
         exerciseId: asString(metadata.exerciseId),
         authorId: asString(metadata.authorId)

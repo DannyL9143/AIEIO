@@ -133,10 +133,12 @@ docker exec -it aieio-web node scripts/seed-users.js
 - `POST /api/v1/scenarios/generate` with `mode=instructor_custom`
 - `POST /api/v1/scenarios/generate` with `mode=dataset_generated`
 - `POST /api/v1/evaluate`
+- `POST /api/v1/evaluate/rewrite`
 - `POST /api/v1/auth/login`
 - `GET /api/v1/auth/me`
 - `GET /api/v1/trainee/dashboard` (student-only)
 - `GET /api/v1/instructor/dashboard` (instructor-only)
+- `GET /api/v1/instructor/reviews` (instructor-only)
 
 ### 7) Automated smoke test (local + remote)
 
@@ -144,12 +146,16 @@ From `backend/`:
 
 ```bash
 npm run test:smoke
+npm run test:e2e-loop
+npm run test:demo-readiness
 ```
 
 Remote target:
 
 ```bash
 BASE_URL=https://aieio.forceclone.com npm run test:smoke:remote
+BASE_URL=https://aieio.forceclone.com npm run test:e2e-loop:remote
+BASE_URL=https://aieio.forceclone.com npm run test:demo-readiness:remote
 ```
 
 Optional auth verification:

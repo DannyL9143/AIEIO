@@ -219,6 +219,17 @@ Re-evaluates suggested or edited rewrite.
   "delta": {
     "trustScore": 11,
     "misinterpretationRisk": -9
+  },
+  "evaluation": {
+    "evaluationId": "eval_124",
+    "scenarioId": "scenario_pacific_hadr_01",
+    "overall": {
+      "trustScore": 76,
+      "escalationRisk": 10,
+      "misinterpretationRisk": 26,
+      "misinformationPotential": 24,
+      "opsecConcernScore": 10
+    }
   }
 }
 ```

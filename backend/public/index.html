@@ -4,31 +4,41 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AIEIO Login</title>
-    <style>
-      body { font-family: Arial, sans-serif; margin: 2rem; max-width: 520px; }
-      label { display: block; margin-top: 1rem; }
-      input { width: 100%; padding: 0.5rem; }
-      button { margin-top: 1rem; padding: 0.6rem 1rem; }
-      .error { color: #b00020; margin-top: 1rem; }
-    </style>
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico" />
+    <link rel="icon" type="image/png" href="/img/AIEIOLogo.png" />
+    <link rel="stylesheet" href="/styles/app.css" />
   </head>
   <body>
-    <h1>AIEIO</h1>
-    <p>Sign in to continue. Your role is assigned from user configuration.</p>
-    <form id="login-form">
-      <label for="username">Username</label>
-      <input id="username" name="username" autocomplete="username" required />
-      <label for="password">Password</label>
-      <input
-        id="password"
-        name="password"
-        type="password"
-        autocomplete="current-password"
-        required
-      />
-      <button type="submit">Login</button>
-      <div id="error" class="error" role="alert"></div>
-    </form>
+    <main class="auth-wrap">
+      <section class="auth-card">
+        <div class="auth-brand">
+          <img class="brand-logo" src="/img/AIEIOLogo.png" alt="AIEIO logo" />
+          <h1>AIEIO</h1>
+        </div>
+        <p>Sign in to continue. Your role is assigned from user configuration.</p>
+        <div id="auth-loading" class="stack">
+          <div class="skeleton h-16 w-60"></div>
+          <div class="skeleton h-40"></div>
+          <div class="skeleton h-16 w-45"></div>
+          <div class="skeleton h-40"></div>
+          <div class="skeleton h-40 w-30"></div>
+        </div>
+        <form id="login-form" class="hidden">
+          <label for="username">Username</label>
+          <input id="username" name="username" autocomplete="username" required />
+          <label for="password">Password</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+          />
+          <button id="login-submit" class="btn primary" type="submit">Login</button>
+          <div id="error" class="error" role="alert"></div>
+        </form>
+      </section>
+    </main>
     <script type="module" src="/js/auth.js"></script>
   </body>
 </html>

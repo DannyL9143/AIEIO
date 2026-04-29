@@ -8,7 +8,11 @@
     "dev": "node --watch src/server.js",
     "seed:users": "node scripts/seed-users.js",
     "test:smoke": "node scripts/smoke-test.js",
-    "test:smoke:remote": "node scripts/smoke-test.js"
+    "test:smoke:remote": "node scripts/smoke-test.js",
+    "test:e2e-loop": "node scripts/e2e-loop-test.js",
+    "test:e2e-loop:remote": "node scripts/e2e-loop-test.js",
+    "test:demo-readiness": "node scripts/demo-readiness.js",
+    "test:demo-readiness:remote": "node scripts/demo-readiness.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

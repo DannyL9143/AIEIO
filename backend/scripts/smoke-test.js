@@ -106,6 +106,7 @@ async function testEvaluate(scenarioId) {
     messageType: "press_statement",
     messageText:
       "We are coordinating with local authorities to maintain safety and reduce misinformation.",
+    tone: "calm_factual",
     metadata: {
       exerciseId: "smoke_test",
       authorId: "smoke_runner"

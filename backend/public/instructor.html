@@ -4,11 +4,168 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AIEIO Instructor</title>
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico" />
+    <link rel="icon" type="image/png" href="/img/AIEIOLogo.png" />
+    <link rel="stylesheet" href="/styles/app.css" />
   </head>
   <body>
-    <h1>Instructor Dashboard</h1>
-    <p id="whoami"></p>
-    <button id="logout">Logout</button>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-row">
+          <img class="brand-logo" src="/img/AIEIOLogo.png" alt="AIEIO logo" />
+          <div class="brand">
+            <h2>AIEIO Instructor Studio</h2>
+            <p id="whoami"></p>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn" id="logout">Logout</button>
+        </div>
+      </header>
+
+      <main class="layout">
+        <aside class="panel stack">
+          <div class="panel-header">
+            <h3>Instructor Workflow</h3>
+            <p>Instructor-side progression from setup to final grading.</p>
+          </div>
+          <div class="panel-body stack">
+            <div class="meta-pill">Role: Instructor</div>
+            <div class="state-card empty">
+              <h4>1) Build Scenario</h4>
+              <p>Create and preview custom scenarios.</p>
+            </div>
+            <div class="state-card empty">
+              <h4>2) Publish Assignment</h4>
+              <p>Publish assignment to learner queue.</p>
+            </div>
+            <div class="state-card empty">
+              <h4>3) Review Submission</h4>
+              <p>Compare automated output with learner context.</p>
+            </div>
+            <div class="state-card empty">
+              <h4>4) Final Instructor Assessment</h4>
+              <p>Approve or request revision; instructor decision is final.</p>
+            </div>
+          </div>
+        </aside>
+
+        <section class="stack">
+          <div id="dashboard-loading" class="stack">
+            <article class="panel">
+              <div class="panel-header">
+                <div class="skeleton h-22 w-45"></div>
+                <div class="skeleton h-12 w-90"></div>
+              </div>
+              <div class="panel-body">
+                <div class="grid-2">
+                  <div class="skeleton h-40"></div>
+                  <div class="skeleton h-40"></div>
+                </div>
+                <div class="skeleton h-130" style="margin-top: 0.8rem"></div>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel-header">
+                <div class="skeleton h-22 w-45"></div>
+              </div>
+              <div class="panel-body grid-2">
+                <div class="skeleton-block">
+                  <div class="skeleton h-16 w-60"></div>
+                  <div class="skeleton h-90"></div>
+                </div>
+                <div class="skeleton-block">
+                  <div class="skeleton h-16 w-60"></div>
+                  <div class="skeleton h-90"></div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div id="dashboard-content" class="hidden stack">
+            <article class="panel">
+              <div class="panel-header">
+                <h3>Scenario Builder</h3>
+                <p>Set learning goals and publish custom scenarios for students.</p>
+              </div>
+              <div class="panel-body stack">
+                <label for="scenario-title">Scenario Title</label>
+                <input id="scenario-title" placeholder="e.g., Port communication under pressure" />
+                <div class="grid-2">
+                  <div>
+                    <label for="scenario-source">Source Type</label>
+                    <select id="scenario-source">
+                      <option>Instructor Custom</option>
+                      <option>Dataset Generated</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="scenario-group">Learner Group</label>
+                    <select id="scenario-group">
+                      <option>Section A</option>
+                    </select>
+                  </div>
+                </div>
+                <label for="scenario-context">Scenario Context</label>
+                <textarea id="scenario-context" rows="4" placeholder="Scenario prompts will be connected next."></textarea>
+                <div class="btn-row">
+                  <button id="instructor-preview-btn" class="btn primary">Preview Assignment</button>
+                  <button id="instructor-publish-btn" class="btn">Publish to Class</button>
+                </div>
+                <p class="inline-note" id="instructor-action-note">Builder actions are in UX preview mode.</p>
+                <div id="instructor-preview-result" class="state-card empty">
+                  <h4>No preview yet</h4>
+                  <p>Generate a preview to validate instructor custom scenario details.</p>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-header">
+                <h3>Review Queue</h3>
+                <p>Monitor submissions, compare automated scoring, and provide final instructor assessment.</p>
+              </div>
+              <div class="panel-body grid-2">
+                <div class="state-card empty" id="instructor-review-list">
+                  <h4>Submission List</h4>
+                  <p>No submissions endpoint is wired yet; this section is ready for integration.</p>
+                </div>
+                <div class="state-card empty" id="instructor-learner-detail">
+                  <h4>Learner Detail</h4>
+                  <p>Select a submission to open learner-level trust/risk details.</p>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-header">
+                <h3>System States and Recovery</h3>
+                <p>Operational recovery actions for assignment and review workflows.</p>
+              </div>
+              <div class="panel-body stack">
+                <div class="state-card empty">
+                  <h4>No submissions yet</h4>
+                  <p>Students have not submitted drafts for this scenario.</p>
+                  <div class="state-actions">
+                    <button class="btn" data-toast-message="Reminder queued for learners." data-toast-variant="success">Send Reminder</button>
+                    <button class="btn" data-toast-message="Returning to assignment settings." data-toast-variant="success">Adjust Assignment</button>
+                  </div>
+                </div>
+                <div class="state-card error">
+                  <h4>Class data sync issue</h4>
+                  <p>Review data did not load. Retry sync or open a different queue.</p>
+                  <div class="state-actions">
+                    <button class="btn" data-toast-message="Retrying class sync..." data-toast-variant="error">Retry Sync</button>
+                    <button class="btn" data-toast-message="Switched review queue." data-toast-variant="success">Switch Queue</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+    <div id="toast-zone" class="toast-zone" aria-live="polite"></div>
     <script type="module" src="/js/auth.js"></script>
   </body>
 </html>

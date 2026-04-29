@@ -8,7 +8,24 @@ function containsAny(text, tokens) {
   return tokens.some((token) => text.includes(token));
 }
 
-function scoreMessage(messageText) {
+function detectTone(messageText) {
+  const text = messageText.toLowerCase();
+  if (containsAny(text, ["we understand", "we hear", "community", "families"])) {
+    return "empathetic_reassuring";
+  }
+  if (containsAny(text, ["will", "must", "directive", "order"])) {
+    return "firm_authoritative";
+  }
+  if (containsAny(text, ["verified", "facts", "update", "briefing"])) {
+    return "transparent_briefing";
+  }
+  if (containsAny(text, ["residents", "local communities", "civilian", "neighbors"])) {
+    return "community_focused";
+  }
+  return "calm_factual";
+}
+
+function scoreMessage(messageText, expectedTone) {
   const text = messageText.toLowerCase();
   const words = text.split(/\s+/).filter(Boolean);
 
@@ -34,10 +51,20 @@ function scoreMessage(messageText) {
     "schedule",
     "deployment time"
   ]);
+  const detectedTone = detectTone(messageText);
+  const toneMismatch = expectedTone && expectedTone !== detectedTone;
 
-  const trustScore = clamp(45 + (hasDeescalationLanguage ? 20 : 0) - (hasEscalatoryLanguage ? 12 : 0), 0, 100);
+  const trustScore = clamp(
+    45 + (hasDeescalationLanguage ? 20 : 0) - (hasEscalatoryLanguage ? 12 : 0) - (toneMismatch ? 8 : 0),
+    0,
+    100
+  );
   const escalationRisk = clamp(25 + (hasEscalatoryLanguage ? 30 : 0) - (hasDeescalationLanguage ? 10 : 0), 0, 100);
-  const misinterpretationRisk = clamp(35 + (words.length < 12 ? 10 : 0), 0, 100);
+  const misinterpretationRisk = clamp(
+    35 + (words.length < 12 ? 10 : 0) + (toneMismatch ? 10 : 0),
+    0,
+    100
+  );
   const misinformationPotential = clamp(30 + (words.length < 10 ? 10 : 0) + (hasEscalatoryLanguage ? 12 : 0), 0, 100);
   const opsecConcernScore = clamp(10 + (hasOpsecLeak ? 45 : 0), 0, 100);
 
@@ -46,11 +73,13 @@ function scoreMessage(messageText) {
     escalationRisk,
     misinterpretationRisk,
     misinformationPotential,
-    opsecConcernScore
+    opsecConcernScore,
+    toneMismatch,
+    detectedTone
   };
 }
 
-function buildRiskFindings(overall) {
+function buildRiskFindings(overall, expectedTone) {
   const findings = [];
 
   if (overall.opsecConcernScore >= 40) {
@@ -86,6 +115,14 @@ function buildRiskFindings(overall) {
       severity: "medium",
       evidence: "Statement could be selectively quoted to amplify false narratives.",
       recommendation: "Pre-bunk likely misreads and include verifiable context."
+    });
+  }
+  if (overall.toneMismatch) {
+    findings.push({
+      type: "tone_alignment",
+      severity: "medium",
+      evidence: `Selected tone (${expectedTone}) does not match detected wording (${overall.detectedTone}).`,
+      recommendation: "Align wording choices with the intended communication tone."
     });
   }
 
@@ -130,9 +167,9 @@ function buildRewrite(messageText) {
   };
 }
 
-export function evaluateSubmission({ scenarioId, messageText }) {
-  const overall = scoreMessage(messageText);
-  const riskFindings = buildRiskFindings(overall);
+export function evaluateSubmission({ scenarioId, messageText, tone }) {
+  const overall = scoreMessage(messageText, tone);
+  const riskFindings = buildRiskFindings(overall, tone);
   const personaReactions = buildPersonaReactions(overall);
 
   return {
@@ -146,7 +183,8 @@ export function evaluateSubmission({ scenarioId, messageText }) {
       topDrivers: [
         "De-escalatory vs escalatory language balance",
         "Potential OPSEC leakage",
-        "Message clarity and ambiguity level"
+        "Message clarity and ambiguity level",
+        "Tone alignment between intended and observed wording"
       ]
     },
     rewrite: buildRewrite(messageText)
