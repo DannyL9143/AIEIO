@@ -32,6 +32,102 @@ Out of scope for hackathon MVP:
 5. Validate with `docs/TEST_PLAN.md`
 6. Rehearse final presentation with `docs/DEMO_SCRIPT.md`
 
+## Kickoff Deployment Runbook
+
+### 1) Backend setup
+
+```bash
+cd backend
+npm install
+```
+
+### 2) Seed login users
+
+```bash
+cd backend
+npm run seed:users
+```
+
+The seed script provisions these users with generated passwords:
+
+- `danny` (`student`)
+- `danny.instructor` (`instructor`)
+- `judge` (`student`)
+- `judge.instructor` (`instructor`)
+
+Passwords are printed once at seed time and only hashes are stored in `data/users/credentials.json`.
+
+### 3) Local run
+
+```bash
+cd backend
+npm start
+```
+
+Open `http://localhost:3000` and log in. Role-based routing is automatic based on the user JSON record.
+
+### 4) Container run
+
+Create `.env` from `.env.example`, then run:
+
+```bash
+docker compose up --build
+```
+
+### 5) Deploy image to Linux server (before commit if needed)
+
+Build and export image from your local machine:
+
+```bash
+docker build -t aieio-web:0.1.0 .
+docker save -o aieio-web_0.1.0.tar aieio-web:0.1.0
+```
+
+Copy image tar to Linux server:
+
+```bash
+scp aieio-web_0.1.0.tar <user>@<server-ip>:/tmp/
+```
+
+On Linux server, load and run:
+
+```bash
+docker load -i /tmp/aieio-web_0.1.0.tar
+mkdir -p /opt/aieio/data
+cat > /opt/aieio/.env <<'EOF'
+PORT=3000
+JWT_SECRET=replace-with-a-long-random-secret
+JWT_EXPIRES_IN=8h
+EOF
+docker run -d \
+  --name aieio-web \
+  --restart unless-stopped \
+  -p 3000:3000 \
+  --env-file /opt/aieio/.env \
+  -v /opt/aieio/data:/app/data \
+  aieio-web:0.1.0
+```
+
+Seed users on Linux server:
+
+```bash
+docker exec -it aieio-web node scripts/seed-users.js
+```
+
+### 6) Key API checks
+
+- `GET /api/v1/health`
+- `POST /api/v1/auth/login`
+- `GET /api/v1/auth/me`
+- `GET /api/v1/trainee/dashboard` (student-only)
+- `GET /api/v1/instructor/dashboard` (instructor-only)
+
+### Kickoff Security Notes
+
+- JWT secret must be set through environment variables in hosted deployment.
+- Passwords are bcrypt-hashed; plaintext passwords are never stored.
+- JWT is bearer-token based for kickoff speed and should be migrated to hardened session/cookie handling after hackathon.
+
 ## Documentation Index
 
 - `docs/PROJECT_PLAN.md` - Mission, value proposition, success criteria, non-goals

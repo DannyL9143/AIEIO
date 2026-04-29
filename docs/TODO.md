@@ -5,6 +5,14 @@ Labels:
 - `SHOULD` = valuable if core flow stable
 - `STRETCH` = only if time remains
 
+## Kickoff Deployment
+
+- [x] `MUST` (Owner: LaneA, Target: H+1) Stand up containerized Node.js app with static frontend served by backend.
+- [x] `MUST` (Owner: LaneA, Target: H+2) Implement JWT login with JSON-backed credentials and role lookup from `data/users/users.json`.
+- [x] `MUST` (Owner: LaneA+LaneB, Target: H+3) Add role-based redirects after login without UI role selector.
+- [x] `MUST` (Owner: LaneA, Target: H+3) Seed kickoff users (`danny`, `danny.instructor`, `judge`, `judge.instructor`) and capture generated passwords.
+- [x] `MUST` (Owner: LaneA, Target: H+4) Verify health endpoint and role-protected routes in both local and container runtime.
+
 ## Backend
 
 - [ ] `MUST` (Owner: LaneA, Target: H+2) Implement dataset ingestion/normalization for `CORSAIR` and `GlobalMaritime`.

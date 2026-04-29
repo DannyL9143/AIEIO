@@ -1,0 +1,32 @@
+{
+  "users": [
+    {
+      "id": "u_8d391db0ab85",
+      "username": "danny",
+      "displayName": "Danny Student",
+      "role": "student",
+      "active": true
+    },
+    {
+      "id": "u_029eca38d4aa",
+      "username": "danny.instructor",
+      "displayName": "Danny Instructor",
+      "role": "instructor",
+      "active": true
+    },
+    {
+      "id": "u_5298ccfcee1e",
+      "username": "judge",
+      "displayName": "Judge Student",
+      "role": "student",
+      "active": true
+    },
+    {
+      "id": "u_11671eab5166",
+      "username": "judge.instructor",
+      "displayName": "Judge Instructor",
+      "role": "instructor",
+      "active": true
+    }
+  ]
+}
