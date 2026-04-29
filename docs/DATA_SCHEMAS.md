@@ -15,7 +15,11 @@
     "incidentRegion": "string",
     "incidentType": "string",
     "vesselType": "string",
-    "confidenceNote": "string"
+    "confidenceNote": "string",
+    "sourceSpecific": {
+      "datasetSpecificFieldA": "string|number",
+      "datasetSpecificFieldB": "string|number"
+    }
   },
   "region": "string",
   "objectives": ["string"],
@@ -114,3 +118,4 @@
 - Model output must be validated and normalized before storage.
 - If `scenarioSourceType` is `dataset_generated`, `sourceDataset` and `sourceMetadata` are required.
 - If `scenarioSourceType` is `instructor_custom`, `sourceDataset` must be `null` and provenance fields may be empty.
+- `sourceMetadata.sourceSpecific` is required for `dataset_generated` and preserves raw dataset-unique fields (shape differs by dataset).

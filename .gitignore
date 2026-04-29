@@ -1,0 +1,9 @@
+# Root-level exported Docker images
+/*.tar
+
+# Dependency directories
+node_modules/
+backend/node_modules/
+
+# Runtime evaluation output
+data/evaluations/*.json

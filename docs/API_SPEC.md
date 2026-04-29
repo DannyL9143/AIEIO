@@ -6,19 +6,45 @@ Base path: `/api/v1`
 
 Returns list of available scenarios, including source metadata for dataset-generated entries.
 
+### Query Parameters
+
+- `dataset` (optional): `CORSAIR|GlobalMaritime`
+- `region` (optional): case-insensitive substring match
+- `incidentType` (optional): case-insensitive substring match
+- `limit` (optional): max results, default `20`, max `100`
+
 ### Response 200
 
 ```json
 {
   "scenarios": [
     {
-      "id": "scenario_pacific_hadr_01",
-      "title": "Humanitarian Aid Mission in Pacific",
+      "id": "scenario_corsair_ASAM-1993-00000",
+      "title": "Fired Upon near Gulf of Guinea",
+      "description": "Bulk Carrier attacked by Bakassi Strike Force remnant approx 265nm offshore.",
       "scenarioSourceType": "dataset_generated",
-      "sourceDataset": "GlobalMaritime",
-      "sourceRecordIds": ["gm_2024_00412"],
-      "objectives": ["Build public trust"],
-      "risks": ["Perceived militarization"]
+      "sourceDataset": "CORSAIR",
+      "sourceRecordIds": ["ASAM-1993-00000"],
+      "sourceMetadata": {
+        "incidentDate": "2019-07-24T08:58:00",
+        "incidentRegion": "Gulf of Guinea",
+        "incidentType": "Fired Upon",
+        "vesselType": "Bulk Carrier",
+        "confidenceNote": "Normalized from CORSAIR source fields.",
+        "sourceSpecific": {
+          "crewInjured": 0,
+          "hostagesTaken": 0,
+          "weapons": "Unknown",
+          "year": 2019,
+          "month": 7
+        }
+      },
+      "region": "Gulf of Guinea",
+      "objectives": ["Build public trust", "Preserve freedom of navigation"],
+      "risks": ["Perceived militarization", "Narrative exploitation by adversaries"],
+      "stakeholders": ["Local civilians", "Regional partners", "Maritime operators"],
+      "tags": ["piracy", "maritime-security", "corsair"],
+      "difficulty": "medium"
     }
   ]
 }
@@ -45,6 +71,7 @@ Generates scenario candidates from authoritative piracy datasets or custom const
   "customScenario": {
     "title": "string",
     "description": "string",
+    "region": "string",
     "objectives": ["string"],
     "risks": ["string"],
     "stakeholders": ["string"]
@@ -67,12 +94,19 @@ Generates scenario candidates from authoritative piracy datasets or custom const
         "incidentDate": "2024-08-14",
         "incidentRegion": "Horn of Africa",
         "incidentType": "boarding_attempt",
-        "vesselType": "commercial_cargo"
+        "vesselType": "commercial_cargo",
+        "confidenceNote": "Normalized from CORSAIR source fields.",
+        "sourceSpecific": {}
       }
     }
   ]
 }
 ```
+
+For `instructor_custom`, response returns a single scenario with:
+- `scenarioSourceType: "instructor_custom"`
+- `sourceDataset: null`
+- provenance fields populated as instructor-defined metadata.
 
 ## POST /personas/generate
 
@@ -125,21 +159,40 @@ Runs complete simulation and scoring for submitted message.
 
 ```json
 {
-  "evaluationId": "eval_123",
+  "evaluationId": "eval_671cebcc-1646-4658-ac2d-e8c7e1adce7c",
+  "scenarioId": "scenario_corsair_ASAM-1993-00000",
   "overall": {
-    "trustScore": 68,
-    "escalationRisk": 22,
-    "misinterpretationRisk": 36,
-    "misinformationPotential": 48,
-    "opsecConcernScore": 15
+    "trustScore": 65,
+    "escalationRisk": 15,
+    "misinterpretationRisk": 35,
+    "misinformationPotential": 30,
+    "opsecConcernScore": 10
   },
-  "personaReactions": [],
+  "personaReactions": [
+    {
+      "personaId": "persona_local_civilians",
+      "reactionSummary": "Local communities focus on safety and practical outcomes.",
+      "sentiment": "positive",
+      "trustImpact": 3,
+      "likelyInterpretation": "Intent is judged by whether messaging is protective and specific.",
+      "repostLikelihood": "medium",
+      "keyConcern": "Civilian protection and disruption to daily life."
+    }
+  ],
   "riskFindings": [],
+  "explainability": {
+    "scoreRationale": "Scores are derived from deterministic keyword and clarity heuristics.",
+    "topDrivers": [
+      "De-escalatory vs escalatory language balance",
+      "Potential OPSEC leakage",
+      "Message clarity and ambiguity level"
+    ]
+  },
   "rewrite": {
-    "suggestedMessage": "Our priority is rapid humanitarian support in coordination with local authorities.",
+    "suggestedMessage": "Our priority is civilian safety and coordinated maritime security support with regional authorities.",
     "whyItImproves": [
-      "Reduces militarized framing",
-      "Improves local legitimacy emphasis"
+      "Reinforces safety-first intent with less escalatory framing.",
+      "Centers coordination with legitimate authorities to increase trust."
     ]
   }
 }
@@ -179,7 +232,8 @@ Returns service and provider status for demo readiness.
 ```json
 {
   "status": "ok",
-  "llmProvider": "available"
+  "service": "aieio-backend",
+  "llmProvider": "mock|available"
 }
 ```
 

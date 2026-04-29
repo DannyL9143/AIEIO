@@ -15,13 +15,13 @@ Labels:
 
 ## Backend
 
-- [ ] `MUST` (Owner: LaneA, Target: H+2) Implement dataset ingestion/normalization for `CORSAIR` and `GlobalMaritime`.
-- [ ] `MUST` (Owner: LaneA, Target: H+3) Implement `/api/v1/scenarios` endpoint with metadata-rich dataset-generated scenario listing.
-- [ ] `MUST` (Owner: LaneA, Target: H+4) Implement `/api/v1/evaluate` endpoint returning schema-valid output.
-- [ ] `MUST` (Owner: LaneA, Target: H+6) Add schema validation and output normalization.
-- [ ] `MUST` (Owner: LaneA, Target: H+8) Add provider abstraction with live and mock modes.
-- [ ] `MUST` (Owner: LaneA, Target: H+9) Add dual-mode scenario generation API path (`dataset_generated` and `instructor_custom`).
-- [ ] `SHOULD` (Owner: LaneA, Target: H+12) Persist evaluations as local JSON records.
+- [x] `MUST` (Owner: LaneA, Target: H+2) Implement dataset ingestion/normalization for `CORSAIR` and `GlobalMaritime`.
+- [x] `MUST` (Owner: LaneA, Target: H+3) Implement `/api/v1/scenarios` endpoint with metadata-rich dataset-generated scenario listing.
+- [x] `MUST` (Owner: LaneA, Target: H+4) Implement `/api/v1/evaluate` endpoint returning schema-valid output.
+- [x] `MUST` (Owner: LaneA, Target: H+6) Add schema validation and output normalization.
+- [x] `MUST` (Owner: LaneA, Target: H+8) Add provider abstraction with live and mock modes.
+- [x] `MUST` (Owner: LaneA, Target: H+9) Add dual-mode scenario generation API path (`dataset_generated` and `instructor_custom`).
+- [x] `SHOULD` (Owner: LaneA, Target: H+12) Persist evaluations as local JSON records.
 
 ## Frontend
 

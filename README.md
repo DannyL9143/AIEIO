@@ -98,6 +98,7 @@ cat > /opt/aieio/.env <<'EOF'
 PORT=3000
 JWT_SECRET=replace-with-a-long-random-secret
 JWT_EXPIRES_IN=8h
+EVALUATION_PROVIDER_MODE=mock
 EOF
 docker run -d \
   --name aieio-web \
@@ -108,6 +109,17 @@ docker run -d \
   aieio-web:0.1.0
 ```
 
+Copy required dataset folders into the mounted data path (required for dataset-generated APIs):
+
+```bash
+mkdir -p /opt/aieio/data/CORSAIR /opt/aieio/data/GlobalMaritime /opt/aieio/data/users
+```
+
+From your source checkout (or extracted artifacts), copy:
+- `data/CORSAIR/corsair_pirate_attacks.csv` -> `/opt/aieio/data/CORSAIR/`
+- `data/GlobalMaritime/global_maritime_pirate_attacks.csv` -> `/opt/aieio/data/GlobalMaritime/`
+- `data/users/users.json` -> `/opt/aieio/data/users/`
+
 Seed users on Linux server:
 
 ```bash
@@ -117,10 +129,34 @@ docker exec -it aieio-web node scripts/seed-users.js
 ### 6) Key API checks
 
 - `GET /api/v1/health`
+- `GET /api/v1/scenarios?limit=2` (dataset files must be present)
+- `POST /api/v1/scenarios/generate` with `mode=instructor_custom`
+- `POST /api/v1/scenarios/generate` with `mode=dataset_generated`
+- `POST /api/v1/evaluate`
 - `POST /api/v1/auth/login`
 - `GET /api/v1/auth/me`
 - `GET /api/v1/trainee/dashboard` (student-only)
 - `GET /api/v1/instructor/dashboard` (instructor-only)
+
+### 7) Automated smoke test (local + remote)
+
+From `backend/`:
+
+```bash
+npm run test:smoke
+```
+
+Remote target:
+
+```bash
+BASE_URL=https://aieio.forceclone.com npm run test:smoke:remote
+```
+
+Optional auth verification:
+
+```bash
+BASE_URL=https://aieio.forceclone.com TEST_USERNAME=<username> TEST_PASSWORD=<password> npm run test:smoke:remote
+```
 
 ### Kickoff Security Notes
 
