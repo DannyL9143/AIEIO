@@ -73,7 +73,7 @@ Script validates:
    - Verify at least one meaningful metric improves or high-severity risk decreases
 
 4. Role Behavior
-   - Student run flagged as scored
+   - Trainee run flagged as scored
    - Instructor test flagged as non-scored
 
 5. Fallback Reliability
@@ -95,6 +95,34 @@ Script validates:
 - [ ] UI shows all core metrics without layout break
 - [ ] End-to-end run completes within acceptable demo timing
 - [ ] Both scenario paths (dataset-generated and custom) pass end-to-end evaluation loop
+
+## Demo Prep Validation (Current UI)
+
+Run this checklist after redeploying to hosted server and before rehearsal:
+
+### Instructor Mode
+
+- [ ] Source type includes both `Instructor Custom` and `Dataset Generated (Unified Model)`
+- [ ] Dataset checklist is visible and can toggle `GlobalMaritime` / `CORSAIR` / `Instructor Uploads`
+- [ ] Dataset summary text updates when checklist options change
+- [ ] `AI Generate Dataset` button shows generated dataset draft card and updates source type/context
+- [ ] Preview card shows `Datasets Used` for the current scenario
+- [ ] Workflow cards on left update color as actions progress (`Build` -> `Publish` -> `Review` -> `Final`)
+- [ ] `System States and Recovery` panel renders sample states and recovery actions
+
+### Trainee Mode
+
+- [ ] Header/role text uses `Trainee` terminology (not `Student`) in visible UI copy
+- [ ] Flow navigation cards on left update color as trainee progresses through steps
+- [ ] Drafting/assessment button labels match demo script wording (`Run AI Assessment`, `Compare Rewrite`, submit/refresh review actions)
+- [ ] Assessment flow still works end-to-end: evaluate -> compare rewrite -> submit -> refresh status
+- [ ] Trainee toasts and inline notes use updated trainee-focused wording
+
+### Demo Readiness Gate
+
+- [ ] Complete one full instructor-custom path and one unified dataset path without errors
+- [ ] Confirm visible workflow progression in both instructor and trainee views during live narration
+- [ ] Capture any copy/UX mismatch as P2 unless it blocks presenter clarity
 
 ## Defect Priority Rules
 

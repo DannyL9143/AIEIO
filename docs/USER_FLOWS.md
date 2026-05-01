@@ -1,18 +1,18 @@
 # User Flows
 
-## Student Flow
+## Trainee Flow
 
-1. Student logs in and selects role as `student`.
-2. Student chooses a scenario from a generated list that can include metadata-backed piracy scenarios or receives an assigned scenario.
+1. Trainee logs in and selects role as `trainee`.
+2. Trainee chooses a scenario from a generated list that can include metadata-backed piracy scenarios or receives an assigned scenario.
 3. System displays scenario brief, stakeholders, communication risks, and objectives.
-4. Student drafts one or more message artifacts.
-5. Student submits message for simulation.
+4. Trainee drafts one or more message artifacts.
+5. Trainee submits message for simulation.
 6. System returns:
    - Audience reactions
    - Risk warnings
    - Composite scorecard
    - Rewrite suggestion
-7. Student revises and re-runs evaluation.
+7. Trainee revises and re-runs evaluation.
 8. System stores scored attempt for metrics.
 
 ## Instructor Flow
@@ -33,7 +33,7 @@
 5. Instructor runs scenario test with sample messaging.
 6. System returns full simulation and risk outputs.
 7. Instructor reviews quality and calibrates scenario settings.
-8. Instructor test runs are marked non-scored for students.
+8. Instructor test runs are marked non-scored for trainees.
 
 ## Shared Flow States
 
@@ -51,7 +51,7 @@
 
 ## Permissions Summary
 
-- Student:
+- Trainee:
   - Read scenarios
   - Submit messages
   - View own results

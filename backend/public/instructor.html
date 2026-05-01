@@ -31,19 +31,19 @@
           </div>
           <div class="panel-body stack">
             <div class="meta-pill">Role: Instructor</div>
-            <div class="state-card empty">
+            <div class="state-card workflow-card empty" id="workflow-step-build">
               <h4>1) Build Scenario</h4>
               <p>Create and preview custom scenarios.</p>
             </div>
-            <div class="state-card empty">
+            <div class="state-card workflow-card empty" id="workflow-step-publish">
               <h4>2) Publish Assignment</h4>
               <p>Publish assignment to learner queue.</p>
             </div>
-            <div class="state-card empty">
+            <div class="state-card workflow-card empty" id="workflow-step-review">
               <h4>3) Review Submission</h4>
               <p>Compare automated output with learner context.</p>
             </div>
-            <div class="state-card empty">
+            <div class="state-card workflow-card empty" id="workflow-step-final">
               <h4>4) Final Instructor Assessment</h4>
               <p>Approve or request revision; instructor decision is final.</p>
             </div>
@@ -86,7 +86,7 @@
             <article class="panel">
               <div class="panel-header">
                 <h3>Scenario Builder</h3>
-                <p>Set learning goals and publish custom scenarios for students.</p>
+                <p>Set learning goals and publish AI red-team scenarios for trainees.</p>
               </div>
               <div class="panel-body stack">
                 <label for="scenario-title">Scenario Title</label>
@@ -96,19 +96,23 @@
                     <label for="scenario-source">Source Type</label>
                     <select id="scenario-source">
                       <option>Instructor Custom</option>
-                      <option>Dataset Generated</option>
+                      <option>Dataset Generated (Unified Model)</option>
                     </select>
                   </div>
                   <div>
-                    <label for="scenario-group">Learner Group</label>
-                    <select id="scenario-group">
-                      <option>Section A</option>
-                    </select>
+                    <label>Datasets Included</label>
+                    <div class="state-card dataset-checklist">
+                      <label><input type="checkbox" class="dataset-option" value="GlobalMaritime" checked /> GlobalMaritime</label>
+                      <label><input type="checkbox" class="dataset-option" value="CORSAIR" checked /> CORSAIR</label>
+                      <label><input type="checkbox" class="dataset-option" value="InstructorUploads" /> Instructor Uploads</label>
+                    </div>
                   </div>
                 </div>
+                <p class="inline-note" id="scenario-dataset-summary">Using datasets: GlobalMaritime, CORSAIR</p>
                 <label for="scenario-context">Scenario Context</label>
                 <textarea id="scenario-context" rows="4" placeholder="Scenario prompts will be connected next."></textarea>
                 <div class="btn-row">
+                  <button id="instructor-generate-dataset-btn" class="btn ai-btn">🤖 AI Generate Dataset</button>
                   <button id="instructor-preview-btn" class="btn primary">Preview Assignment</button>
                   <button id="instructor-publish-btn" class="btn">Publish to Class</button>
                 </div>
@@ -143,20 +147,20 @@
                 <p>Operational recovery actions for assignment and review workflows.</p>
               </div>
               <div class="panel-body stack">
-                <div class="state-card empty">
-                  <h4>No submissions yet</h4>
-                  <p>Students have not submitted drafts for this scenario.</p>
+                <div class="state-card">
+                  <h4>Dataset generation pending review</h4>
+                  <p>Unified model draft created with 148 candidate records from selected datasets.</p>
                   <div class="state-actions">
-                    <button class="btn" data-toast-message="Reminder queued for learners." data-toast-variant="success">Send Reminder</button>
-                    <button class="btn" data-toast-message="Returning to assignment settings." data-toast-variant="success">Adjust Assignment</button>
+                    <button class="btn" data-toast-message="Queued dataset quality checks." data-toast-variant="success">Run QA Checks</button>
+                    <button class="btn" data-toast-message="Merged approved records into scenario template." data-toast-variant="success">Promote to Scenario</button>
                   </div>
                 </div>
                 <div class="state-card error">
-                  <h4>Class data sync issue</h4>
-                  <p>Review data did not load. Retry sync or open a different queue.</p>
+                  <h4>Recovery drill: source mapping mismatch</h4>
+                  <p>6 records failed field mapping after schema refresh. Recovery playbook available.</p>
                   <div class="state-actions">
-                    <button class="btn" data-toast-message="Retrying class sync..." data-toast-variant="error">Retry Sync</button>
-                    <button class="btn" data-toast-message="Switched review queue." data-toast-variant="success">Switch Queue</button>
+                    <button class="btn" data-toast-message="Re-running mapping pipeline..." data-toast-variant="error">Retry Mapping</button>
+                    <button class="btn" data-toast-message="Fallback schema pack applied." data-toast-variant="success">Apply Fallback</button>
                   </div>
                 </div>
               </div>

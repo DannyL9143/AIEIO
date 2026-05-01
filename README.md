@@ -50,9 +50,9 @@ npm run seed:users
 
 The seed script provisions these users with generated passwords:
 
-- `danny` (`student`)
+- `danny` (`trainee`)
 - `danny.instructor` (`instructor`)
-- `judge` (`student`)
+- `judge` (`trainee`)
 - `judge.instructor` (`instructor`)
 
 Passwords are printed once at seed time and only hashes are stored in `data/users/credentials.json`.
@@ -136,7 +136,7 @@ docker exec -it aieio-web node scripts/seed-users.js
 - `POST /api/v1/evaluate/rewrite`
 - `POST /api/v1/auth/login`
 - `GET /api/v1/auth/me`
-- `GET /api/v1/trainee/dashboard` (student-only)
+- `GET /api/v1/trainee/dashboard` (trainee-only)
 - `GET /api/v1/instructor/dashboard` (instructor-only)
 - `GET /api/v1/instructor/reviews` (instructor-only)
 
@@ -175,7 +175,7 @@ BASE_URL=https://aieio.forceclone.com TEST_USERNAME=<username> TEST_PASSWORD=<pa
 - `docs/PROJECT_PLAN.md` - Mission, value proposition, success criteria, non-goals
 - `docs/HACKATHON_EXECUTION_PLAN.md` - Day 1/Day 2 schedule and risk fallback
 - `docs/PRODUCT_REQUIREMENTS.md` - MVP requirements and acceptance criteria
-- `docs/USER_FLOWS.md` - Student/instructor flow definitions
+- `docs/USER_FLOWS.md` - Trainee/instructor flow definitions
 - `docs/ARCHITECTURE.md` - Node backend and web UI architecture
 - `docs/DATA_SCHEMAS.md` - JSON contracts for scenario/persona/evaluation
 - `docs/API_SPEC.md` - API endpoint contract draft

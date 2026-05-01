@@ -128,6 +128,16 @@ body {
   border-color: var(--primary);
 }
 
+.btn.ai-btn {
+  background: #f3f0ff;
+  border-color: #d6ccff;
+  color: #4c1d95;
+}
+
+.btn.ai-btn:hover {
+  background: #ede9fe;
+}
+
 .btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
@@ -157,6 +167,23 @@ body {
 
 .meta-pill.success {
   color: var(--success);
+}
+
+.meta-pill.source-pill {
+  border-style: solid;
+  font-weight: 600;
+}
+
+.meta-pill.source-pill.dataset-generated {
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+  background: #eff6ff;
+}
+
+.meta-pill.source-pill.instructor-custom {
+  color: #6d28d9;
+  border-color: #ddd6fe;
+  background: #f5f3ff;
 }
 
 .error {
@@ -283,6 +310,38 @@ select {
 
 .state-card.empty {
   border-style: dashed;
+}
+
+.workflow-card {
+  border-style: solid;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.workflow-card.active {
+  border-color: #fde68a;
+  background: #fffbeb;
+}
+
+.workflow-card.done {
+  border-color: #86efac;
+  background: #f0fdf4;
+}
+
+.dataset-checklist {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.dataset-checklist label {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.92rem;
+}
+
+.dataset-checklist input[type="checkbox"] {
+  width: auto;
 }
 
 .state-actions {

@@ -29,9 +29,9 @@ Labels:
 
 - [x] `MUST` (Owner: LaneB, Target: H+15) Add explicit "selected scenario loaded" visual treatment with tinted detail panel and selected-card highlight.
 - [x] `MUST` (Owner: LaneB, Target: H+15) Replace role-switch debug control with role-true workflow based on login only.
-- [x] `MUST` (Owner: LaneB, Target: H+16) Expand tone selection options and clarify how tone affects student drafting and assessment.
+- [x] `MUST` (Owner: LaneB, Target: H+16) Expand tone selection options and clarify how tone affects trainee drafting and assessment.
 - [x] `MUST` (Owner: LaneB, Target: H+16) Professionalize scorecard labels/capitalization and apply color-coded numeric and severity styling.
-- [x] `MUST` (Owner: LaneA+LaneB, Target: H+17) Implement student submit-to-instructor step with clear pending/final instructor assessment status.
+- [x] `MUST` (Owner: LaneA+LaneB, Target: H+17) Implement trainee submit-to-instructor step with clear pending/final instructor assessment status.
 - [x] `MUST` (Owner: LaneA+LaneB, Target: H+17) Display automated assessment and final instructor assessment side-by-side in review experience.
 - [x] `SHOULD` (Owner: LaneB, Target: H+18) Convert "Fallback States" into production "System States and Recovery" guidance with real hooks.
 - [x] `SHOULD` (Owner: LaneB, Target: H+18) Replace placeholder flow navigation panel with actionable workflow progress guidance.
@@ -41,7 +41,7 @@ Labels:
 - [x] `MUST` (Owner: LaneB, Target: H+9) Render audience reactions and risk list.
 - [x] `MUST` (Owner: LaneB, Target: H+10) Render scorecard with trust and risk metrics.
 - [x] `MUST` (Owner: LaneB, Target: H+11) Display source metadata for dataset-generated scenarios.
-- [x] `MUST` (Owner: LaneB, Target: H+5) Define student UX flow map (login -> scenario browse -> draft -> evaluate -> score -> rewrite -> compare).
+- [x] `MUST` (Owner: LaneB, Target: H+5) Define trainee UX flow map (login -> scenario browse -> draft -> evaluate -> score -> rewrite -> compare).
 - [x] `MUST` (Owner: LaneB, Target: H+5) Define instructor UX flow map (login -> class view -> custom scenario setup -> preview -> student response review).
 - [x] `MUST` (Owner: LaneB, Target: H+6) Build app shell skeleton (top nav, page frame, role-aware side panel placeholders).
 - [x] `MUST` (Owner: LaneB, Target: H+6) Add authentication/loading skeletons (login submit state, session restore, role redirect transition).
@@ -54,7 +54,7 @@ Labels:
 - [x] `SHOULD` (Owner: LaneB, Target: H+12) Add empty-state designs for no scenarios, no submissions, and no evaluation history.
 - [x] `SHOULD` (Owner: LaneB, Target: H+13) Add error-state designs with recovery actions (retry, go back, switch mode).
 - [x] `SHOULD` (Owner: LaneB, Target: H+14) Add interaction polish states (button pending, optimistic transitions, toast/inline feedback).
-- [x] `SHOULD` (Owner: LaneB, Target: H+14) Add student/instructor role toggle behavior.
+- [x] `SHOULD` (Owner: LaneB, Target: H+14) Add trainee/instructor role toggle behavior.
 - [x] `STRETCH` (Owner: LaneB, Target: H+24) Add misinformation spread mini-visual.
 
 ## AI / Prompting

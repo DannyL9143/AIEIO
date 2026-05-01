@@ -14,7 +14,7 @@
         <div class="brand-row">
           <img class="brand-logo" src="/img/AIEIOLogo.png" alt="AIEIO logo" />
           <div class="brand">
-            <h2>AIEIO Student Experience</h2>
+            <h2>AIEIO Trainee Experience</h2>
             <p id="whoami"></p>
           </div>
         </div>
@@ -27,23 +27,23 @@
         <aside class="panel stack">
           <div class="panel-header">
             <h3>Flow Navigation</h3>
-            <p>Step-by-step student workflow and current status.</p>
+            <p>Step-by-step trainee workflow and current status.</p>
           </div>
           <div class="panel-body stack">
-            <div class="meta-pill">Role: Student</div>
-            <div class="state-card empty">
+            <div class="meta-pill">Role: Trainee</div>
+            <div class="state-card workflow-card empty" id="workflow-step-trainee-select">
               <h4>1) Select Scenario</h4>
               <p>Choose a scenario from the browser panel.</p>
             </div>
-            <div class="state-card empty">
+            <div class="state-card workflow-card empty" id="workflow-step-trainee-draft">
               <h4>2) Draft Response</h4>
               <p>Pick message type and tone, then draft your response.</p>
             </div>
-            <div class="state-card empty">
+            <div class="state-card workflow-card empty" id="workflow-step-trainee-assess">
               <h4>3) Automated Assessment</h4>
               <p>Run evaluation and optional rewrite comparison.</p>
             </div>
-            <div class="state-card empty">
+            <div class="state-card workflow-card empty" id="workflow-step-trainee-instructor">
               <h4>4) Instructor Assessment</h4>
               <p>Submit to instructor and wait for final outcome.</p>
             </div>
@@ -107,11 +107,15 @@
               <div class="panel-header">
                 <h3>Scenario Browser</h3>
                 <p>Browse dataset-backed and instructor custom scenarios.</p>
+                <div class="btn-row">
+                  <span class="meta-pill source-pill dataset-generated">Dataset Generated</span>
+                  <span class="meta-pill source-pill instructor-custom">Instructor Custom</span>
+                </div>
               </div>
               <div class="panel-body stack">
                 <div id="student-scenarios-state" class="state-card empty hidden">
-                  <h4>No scenarios yet</h4>
-                  <p>Try refreshing or changing filters.</p>
+                  <h4>No scenarios available yet</h4>
+                  <p>Refresh to check for newly published instructor scenarios.</p>
                 </div>
                 <div id="student-scenario-list" class="grid-2"></div>
                 <div id="student-scenario-detail" class="state-card empty">
@@ -124,7 +128,7 @@
             <article class="panel">
               <div class="panel-header">
                 <h3>Message Drafting</h3>
-                <p>Compose your first response before running simulation and scoring.</p>
+                <p>Compose your response, then run AI red-team assessment and compare rewrites.</p>
               </div>
               <div class="panel-body stack">
                 <div class="grid-2">
@@ -151,24 +155,25 @@
                 <label for="draft-body">Draft Message</label>
                 <textarea id="draft-body" rows="4" placeholder="Draft workspace will be wired next."></textarea>
                 <div class="grid-2">
-                  <button id="student-evaluate-btn" class="btn primary">Run Evaluation</button>
-                  <button id="student-compare-btn" class="btn">Re-evaluate Rewrite</button>
+                  <button id="student-evaluate-btn" class="btn ai-btn">🤖 Run AI Assessment</button>
+                  <button id="student-compare-btn" class="btn ai-btn">✨ Compare AI Rewrite</button>
                 </div>
                 <div class="grid-2">
-                  <button id="student-submit-btn" class="btn">Submit to Instructor</button>
-                  <button id="student-refresh-status-btn" class="btn">Refresh Instructor Status</button>
+                  <button id="student-submit-btn" class="btn">Submit for Instructor Review</button>
+                  <button id="student-refresh-status-btn" class="btn">Refresh Review Status</button>
                 </div>
                 <div class="grid-2">
-                  <button id="student-audit-log-btn" class="btn">View Assessment Audit Log</button>
+                  <button id="student-audit-log-btn" class="btn">View Review Audit Log</button>
                 </div>
-                <p class="inline-note" id="student-action-note">Actions are in UX preview mode.</p>
+                <p class="inline-note" id="student-action-note">Demo mode: actions show live workflow behavior.</p>
               </div>
             </article>
 
             <article class="panel">
               <div class="panel-header">
-                <h3>Evaluation and Score Preview</h3>
-                <p>Audience reactions, risks, trust score, and rewrite deltas appear here.</p>
+                <h3>AI Red-Team Assessment and Score Preview</h3>
+                <p>AI audience reactions, red-team risks, trust score, and rewrite deltas appear here.</p>
+                <p class="inline-note">AI red-team simulation stress-tests your message for escalation risk, misinformation spread, and trust impact before release.</p>
               </div>
               <div class="panel-body stack">
                 <div id="student-evaluation-state" class="state-card empty">
@@ -203,7 +208,7 @@
             <article class="panel">
               <div class="panel-header">
                 <h3>System States and Recovery</h3>
-                <p>How the student experience handles empty, pending, and error conditions.</p>
+                <p>How the trainee experience handles empty, pending, and error conditions.</p>
               </div>
               <div class="panel-body stack">
                 <div class="state-card" id="student-instructor-status">
@@ -215,19 +220,19 @@
                   <p>Assessment history will appear after submissions and grading events.</p>
                 </div>
                 <div class="state-card empty">
-                  <h4>No scenarios yet</h4>
+                  <h4>No scenarios available</h4>
                   <p>No scenario is available right now. Check again or switch mode.</p>
                   <div class="state-actions">
                     <button class="btn" data-toast-message="Refreshed scenario list." data-toast-variant="success">Refresh Scenarios</button>
-                    <button class="btn" data-toast-message="Switched to custom scenario mode." data-toast-variant="success">Switch to Custom Mode</button>
+                    <button class="btn" data-toast-message="Switched to instructor-custom scenario mode." data-toast-variant="success">Switch to Custom Mode</button>
                   </div>
                 </div>
                 <div class="state-card error">
                   <h4>Evaluation temporarily unavailable</h4>
                   <p>We could not evaluate this draft. Retry or go back to editing.</p>
                   <div class="state-actions">
-                    <button class="btn" data-toast-message="Retry requested." data-toast-variant="error">Retry Evaluation</button>
-                    <button class="btn" data-toast-message="Returned to draft editor." data-toast-variant="success">Back to Draft</button>
+                    <button class="btn" data-toast-message="Assessment retry requested." data-toast-variant="error">Retry Assessment</button>
+                    <button class="btn" data-toast-message="Returned to draft editor." data-toast-variant="success">Return to Draft</button>
                   </div>
                 </div>
               </div>

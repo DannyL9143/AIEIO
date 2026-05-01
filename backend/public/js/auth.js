@@ -3,7 +3,20 @@ const loadingClass = "hidden";
 const appState = {
   selectedScenario: null,
   lastEvaluation: null,
-  instructorReviewStatus: "not_submitted"
+  instructorReviewStatus: "not_submitted",
+  traineeWorkflow: {
+    select: false,
+    draft: false,
+    assess: false,
+    instructor: false
+  },
+  datasetScenarioSeedIndex: 0,
+  instructorWorkflow: {
+    build: false,
+    publish: false,
+    review: false,
+    final: false
+  }
 };
 const scenarioCacheKey = "aieio_student_scenarios_cache_v1";
 const scenarioCacheTtlMs = 60 * 1000;
@@ -88,6 +101,32 @@ function titleCase(text) {
     .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
+function sourceTypeLabel(rawType) {
+  const normalized = String(rawType || "").toLowerCase().trim();
+  if (normalized === "dataset_generated") {
+    return "Dataset Generated";
+  }
+  if (normalized === "instructor_custom") {
+    return "Instructor Custom";
+  }
+  return titleCase(rawType || "Unknown");
+}
+
+function sourceTypePillClass(rawType) {
+  const normalized = String(rawType || "").toLowerCase().trim();
+  if (normalized === "dataset_generated") {
+    return "dataset-generated";
+  }
+  if (normalized === "instructor_custom") {
+    return "instructor-custom";
+  }
+  return "";
+}
+
+function formatRoleLabel(role) {
+  return role === "student" ? "trainee" : role;
+}
+
 function scoreChipClass(label, value) {
   const numeric = Number(value || 0);
   const isRiskMetric = /risk|misinformation|opsec/i.test(label);
@@ -114,6 +153,104 @@ function bindToastButtons() {
       showToast(message, variant);
     });
   });
+}
+
+function setInstructorWorkflowStep(step, value = true) {
+  if (!Object.prototype.hasOwnProperty.call(appState.instructorWorkflow, step)) {
+    return;
+  }
+  appState.instructorWorkflow[step] = Boolean(value);
+  const orderedSteps = ["build", "publish", "review", "final"];
+  const firstIncomplete = orderedSteps.find((key) => !appState.instructorWorkflow[key]);
+  orderedSteps.forEach((key) => {
+    const node = document.getElementById(`workflow-step-${key}`);
+    if (!node) {
+      return;
+    }
+    node.classList.remove("active", "done");
+    if (appState.instructorWorkflow[key]) {
+      node.classList.add("done");
+      return;
+    }
+    if (firstIncomplete === key) {
+      node.classList.add("active");
+    }
+  });
+}
+
+function setInstructorWorkflowActive(step) {
+  const orderedSteps = ["build", "publish", "review", "final"];
+  orderedSteps.forEach((key) => {
+    const node = document.getElementById(`workflow-step-${key}`);
+    if (!node) {
+      return;
+    }
+    if (appState.instructorWorkflow[key]) {
+      node.classList.remove("active");
+      node.classList.add("done");
+      return;
+    }
+    if (key === step) {
+      node.classList.add("active");
+    } else {
+      node.classList.remove("active");
+    }
+  });
+}
+
+function setTraineeWorkflowStep(step, value = true) {
+  if (!Object.prototype.hasOwnProperty.call(appState.traineeWorkflow, step)) {
+    return;
+  }
+  appState.traineeWorkflow[step] = Boolean(value);
+  const orderedSteps = ["select", "draft", "assess", "instructor"];
+  const firstIncomplete = orderedSteps.find((key) => !appState.traineeWorkflow[key]);
+  orderedSteps.forEach((key) => {
+    const node = document.getElementById(`workflow-step-trainee-${key}`);
+    if (!node) {
+      return;
+    }
+    node.classList.remove("active", "done");
+    if (appState.traineeWorkflow[key]) {
+      node.classList.add("done");
+      return;
+    }
+    if (firstIncomplete === key) {
+      node.classList.add("active");
+    }
+  });
+}
+
+function selectedDatasetNames() {
+  return Array.from(document.querySelectorAll(".dataset-option:checked")).map(
+    (node) => String(node.value || "").trim()
+  ).filter(Boolean);
+}
+
+function syncDatasetSummary() {
+  const summary = document.getElementById("scenario-dataset-summary");
+  const datasets = selectedDatasetNames();
+  if (!summary) {
+    return datasets;
+  }
+  if (!datasets.length) {
+    summary.textContent = "Using datasets: none selected";
+  } else {
+    summary.textContent = `Using datasets: ${datasets.join(", ")}`;
+  }
+  return datasets;
+}
+
+function buildContestedLogisticsScenarioContext(selectedDatasets) {
+  const sourceList = selectedDatasets.join(", ") || "selected sources";
+  const variants = [
+    `A coalition logistics convoy transiting a key maritime chokepoint is disrupted after a pirate skiff swarm targets its contracted fuel shuttle, delaying time-sensitive resupply to forward forces. With contested logistics conditions now emerging, your team must issue a public update that reassures partners, deters opportunistic actors, and explains continuity-of-sustainment actions without exposing operational vulnerabilities. Scenario baseline synthesized from unified sources: ${sourceList}.`,
+    `During a high-tempo sustainment window, armed piracy actors board a chartered cargo vessel carrying critical repair parts for expeditionary units, forcing rerouting and creating a cascading delay across the theater distribution plan. In this contested logistics dilemma, draft a statement that communicates control of the situation, preserves allied confidence, and avoids disclosing movements, timelines, or defensive posture details. Scenario baseline synthesized from unified sources: ${sourceList}.`,
+    `A humanitarian and military dual-use sealift lane experiences coordinated pirate harassment near an offshore transfer point, interrupting fuel and medical supply delivery to forward maritime elements. With contested logistics pressure increasing and adversaries amplifying disinformation, craft messaging that demonstrates resilience, protects operational security, and signals sustained support to regional partners. Scenario baseline synthesized from unified sources: ${sourceList}.`
+  ];
+  const index = appState.datasetScenarioSeedIndex % variants.length;
+  appState.datasetScenarioSeedIndex += 1;
+  return variants[index];
 }
 
 function renderScoreRows(overall) {
@@ -163,6 +300,7 @@ function renderStudentInstructorStatus() {
     return;
   }
   if (appState.instructorReviewStatus === "pending_instructor") {
+    setTraineeWorkflowStep("instructor", true);
     statusNode.className = "state-card";
     statusNode.innerHTML =
       "<h4>Instructor Assessment: Pending</h4><p>Your response is waiting in the instructor queue. Automated assessment is visible above.</p>";
@@ -199,17 +337,19 @@ function renderSelectedScenario() {
     return;
   }
   if (!scenario) {
+    setTraineeWorkflowStep("select", false);
     detail.className = "state-card empty";
     detail.innerHTML =
       "<h4>Select a scenario</h4><p>Scenario context and source metadata will appear here.</p>";
     return;
   }
+  setTraineeWorkflowStep("select", true);
   detail.className = "state-card loaded-scenario";
   detail.innerHTML = `
     <h4>${scenario.title}</h4>
     <p>${scenario.description || "No description provided."}</p>
     <div class="kv-list">
-      <div class="kv-row"><span>Source</span><strong>${scenario.scenarioSourceType}</strong></div>
+      <div class="kv-row"><span>Source</span><strong>${sourceTypeLabel(scenario.scenarioSourceType)}</strong></div>
       <div class="kv-row"><span>Dataset</span><strong>${scenario.sourceDataset || "Instructor Custom"}</strong></div>
       <div class="kv-row"><span>Region</span><strong>${scenario.region || "Unknown"}</strong></div>
       <div class="kv-row"><span>Incident Type</span><strong>${scenario.sourceMetadata?.incidentType || "N/A"}</strong></div>
@@ -231,9 +371,11 @@ function renderScenarioList(scenarios) {
   state.classList.add("hidden");
   scenarios.forEach((scenario) => {
     const card = document.createElement("div");
+    const sourceType = sourceTypeLabel(scenario.scenarioSourceType);
+    const sourcePillClass = sourceTypePillClass(scenario.scenarioSourceType);
     card.className = "scenario-card";
     card.innerHTML = `
-      <div class="meta-pill">${scenario.scenarioSourceType}</div>
+      <div class="meta-pill source-pill ${sourcePillClass}">${sourceType}</div>
       <h4>${scenario.title}</h4>
       <p>${scenario.description || "No description provided."}</p>
       <button class="btn">Open Scenario</button>
@@ -338,7 +480,23 @@ function renderEvaluation(evaluation) {
   }
 }
 
+function renderTraineeAssessmentState(title, message, variant = "empty") {
+  const state = document.getElementById("student-evaluation-state");
+  const results = document.getElementById("student-evaluation-results");
+  if (!state || !results) {
+    return;
+  }
+  results.classList.add("hidden");
+  state.className = `state-card ${variant}`;
+  state.innerHTML = `<h4>${title}</h4><p>${message}</p>`;
+}
+
 async function bindStudentInteractions(currentUser) {
+  setTraineeWorkflowStep("select", false);
+  setTraineeWorkflowStep("draft", false);
+  setTraineeWorkflowStep("assess", false);
+  setTraineeWorkflowStep("instructor", false);
+
   const evaluateBtn = document.getElementById("student-evaluate-btn");
   const compareBtn = document.getElementById("student-compare-btn");
   const note = document.getElementById("student-action-note");
@@ -349,7 +507,7 @@ async function bindStudentInteractions(currentUser) {
   const refreshStatusBtn = document.getElementById("student-refresh-status-btn");
   const auditLogBtn = document.getElementById("student-audit-log-btn");
   if (note) {
-    note.textContent = "Loading scenarios...";
+    note.textContent = "Loading trainee scenarios...";
   }
 
   await loadStudentScenarios();
@@ -357,8 +515,13 @@ async function bindStudentInteractions(currentUser) {
   renderStudentInstructorStatus();
   if (note) {
     note.textContent =
-      "Scenarios loaded. Select one, draft your message, then run evaluation.";
+      "Scenarios loaded. Select one, draft your message, then run AI red-team assessment.";
   }
+
+  draftBody?.addEventListener("input", () => {
+    const hasDraft = Boolean(String(draftBody.value || "").trim());
+    setTraineeWorkflowStep("draft", hasDraft);
+  });
 
   if (evaluateBtn) {
     evaluateBtn.addEventListener("click", async () => {
@@ -367,13 +530,30 @@ async function bindStudentInteractions(currentUser) {
       const messageType = String(draftMode?.value || "press_statement");
       const tone = String(document.getElementById("draft-tone")?.value || "calm_factual");
       if (!selected) {
-        showToast("Select a scenario first.", "error");
+        setTraineeWorkflowStep("select", false);
+        renderTraineeAssessmentState(
+          "Select a scenario first",
+          "Choose a scenario from the browser, then run AI red-team assessment."
+        );
+        showToast("Select a scenario to begin.", "error");
         return;
       }
       if (!messageText) {
-        showToast("Add a draft message before evaluation.", "error");
+        setTraineeWorkflowStep("draft", false);
+        renderTraineeAssessmentState(
+          "Draft message required",
+          "Add a draft response, then run AI red-team assessment."
+        );
+        showToast("Add a draft message before assessment.", "error");
         return;
       }
+      setTraineeWorkflowStep("select", true);
+      setTraineeWorkflowStep("draft", true);
+      setTraineeWorkflowStep("assess", false);
+      renderTraineeAssessmentState(
+        "Assessment in progress",
+        "Running AI red-team assessment. Scores and rewrite guidance will appear shortly."
+      );
       const idleText = evaluateBtn.textContent;
       evaluateBtn.textContent = "Evaluating...";
       evaluateBtn.disabled = true;
@@ -397,22 +577,16 @@ async function bindStudentInteractions(currentUser) {
         });
         appState.lastEvaluation = evaluation;
         appState.instructorReviewStatus = "not_submitted";
+        setTraineeWorkflowStep("assess", true);
         renderEvaluation(evaluation);
         renderStudentInstructorStatus();
         if (note) {
           note.textContent = "Live evaluation complete. You can revise and run final re-evaluation.";
         }
-        showToast("Evaluation complete.", "success");
+        showToast("AI red-team assessment complete.", "success");
       } catch (error) {
-        const state = document.getElementById("student-evaluation-state");
-        const results = document.getElementById("student-evaluation-results");
-        if (results) {
-          results.classList.add("hidden");
-        }
-        if (state) {
-          state.className = "state-card error";
-          state.innerHTML = `<h4>Evaluation failed</h4><p>${error.message}</p>`;
-        }
+        setTraineeWorkflowStep("assess", false);
+        renderTraineeAssessmentState("Assessment failed", error.message, "error");
         showToast("Evaluation failed.", "error");
       } finally {
         evaluateBtn.textContent = idleText;
@@ -429,7 +603,7 @@ async function bindStudentInteractions(currentUser) {
       const selected = appState.selectedScenario;
       const updatedText = String(rewriteText?.value || "").trim();
       if (!appState.lastEvaluation || !selected) {
-        showToast("Run initial evaluation first.", "error");
+        showToast("Run an initial assessment first.", "error");
         return;
       }
       if (!updatedText) {
@@ -453,6 +627,7 @@ async function bindStudentInteractions(currentUser) {
         }
         appState.lastEvaluation = reEval;
         appState.instructorReviewStatus = "not_submitted";
+        setTraineeWorkflowStep("assess", true);
         renderEvaluation(reEval);
         renderStudentInstructorStatus();
         const trustDelta = Number(rewritePayload?.delta?.trustScore || 0);
@@ -472,7 +647,7 @@ async function bindStudentInteractions(currentUser) {
   if (submitBtn) {
     submitBtn.addEventListener("click", async () => {
       if (!appState.lastEvaluation?.evaluationId) {
-        showToast("Run evaluation before submitting to instructor.", "error");
+        showToast("Run an assessment before submitting for instructor review.", "error");
         return;
       }
       const idleText = submitBtn.textContent;
@@ -486,8 +661,9 @@ async function bindStudentInteractions(currentUser) {
           })
         });
         appState.instructorReviewStatus = payload.reviewStatus || "pending_instructor";
+        setTraineeWorkflowStep("instructor", true);
         renderStudentInstructorStatus();
-        showToast("Submitted to instructor queue.", "success");
+        showToast("Submitted for instructor review.", "success");
       } catch (error) {
         showToast(error.message, "error");
       } finally {
@@ -500,12 +676,12 @@ async function bindStudentInteractions(currentUser) {
   if (refreshStatusBtn) {
     refreshStatusBtn.addEventListener("click", async () => {
       if (!appState.lastEvaluation?.evaluationId) {
-        showToast("No submission to refresh yet.", "error");
+        showToast("No submitted assessment to refresh yet.", "error");
         return;
       }
       try {
         await refreshStudentInstructorStatus();
-        showToast("Instructor status refreshed.", "success");
+        showToast("Instructor review status refreshed.", "success");
       } catch (error) {
         showToast(error.message, "error");
       }
@@ -556,8 +732,14 @@ async function bindStudentInteractions(currentUser) {
 }
 
 async function bindInstructorInteractions() {
+  setInstructorWorkflowStep("build", false);
+  setInstructorWorkflowStep("publish", false);
+  setInstructorWorkflowStep("review", false);
+  setInstructorWorkflowStep("final", false);
+
   const previewBtn = document.getElementById("instructor-preview-btn");
   const publishBtn = document.getElementById("instructor-publish-btn");
+  const generateDatasetBtn = document.getElementById("instructor-generate-dataset-btn");
   const note = document.getElementById("instructor-action-note");
   const previewResult = document.getElementById("instructor-preview-result");
   const reviewList = document.getElementById("instructor-review-list");
@@ -567,11 +749,51 @@ async function bindInstructorInteractions() {
   }
   const titleInput = document.getElementById("scenario-title");
   const contextInput = document.getElementById("scenario-context");
+  const sourceSelect = document.getElementById("scenario-source");
+  const datasetOptions = document.querySelectorAll(".dataset-option");
+  datasetOptions.forEach((option) => {
+    option.addEventListener("change", syncDatasetSummary);
+  });
+  syncDatasetSummary();
+
+  if (generateDatasetBtn) {
+    generateDatasetBtn.addEventListener("click", async () => {
+      const selectedDatasets = syncDatasetSummary();
+      const idleText = generateDatasetBtn.textContent;
+      generateDatasetBtn.textContent = "Generating...";
+      generateDatasetBtn.disabled = true;
+      await new Promise((resolve) => window.setTimeout(resolve, 800));
+      if (sourceSelect) {
+        sourceSelect.value = "Dataset Generated (Unified Model)";
+      }
+      if (contextInput && !String(contextInput.value || "").trim()) {
+        contextInput.value = buildContestedLogisticsScenarioContext(selectedDatasets);
+      }
+      if (previewResult) {
+        previewResult.className = "state-card";
+        previewResult.innerHTML = `
+          <h4>Unified dataset draft generated</h4>
+          <p>AI prepared an instructor-ready draft from selected datasets. Review and click Preview Assignment to finalize scenario text.</p>
+          <div class="kv-list">
+            <div class="kv-row"><span>Source Type</span><strong>${sourceTypeLabel("dataset_generated")} (Unified Model)</strong></div>
+            <div class="kv-row"><span>Datasets</span><strong>${selectedDatasets.join(", ") || "None selected"}</strong></div>
+          </div>
+        `;
+      }
+      if (note) {
+        note.textContent = "Dataset draft generated in preview mode. Review datasets, then preview assignment.";
+      }
+      showToast("AI dataset draft generated (demo mode).", "success");
+      generateDatasetBtn.textContent = idleText;
+      generateDatasetBtn.disabled = false;
+    });
+  }
 
   if (previewBtn) {
     previewBtn.addEventListener("click", async () => {
       const title = String(titleInput?.value || "").trim();
       const description = String(contextInput?.value || "").trim();
+      const selectedDatasets = syncDatasetSummary();
       if (!title || !description) {
         showToast("Add a title and scenario context first.", "error");
         return;
@@ -601,7 +823,8 @@ async function bindInstructorInteractions() {
             <h4>${scenario.title}</h4>
             <p>${scenario.description}</p>
             <div class="kv-list">
-              <div class="kv-row"><span>Source Type</span><strong>${scenario.scenarioSourceType}</strong></div>
+              <div class="kv-row"><span>Source Type</span><strong>${sourceTypeLabel(scenario.scenarioSourceType)}</strong></div>
+              <div class="kv-row"><span>Datasets Used</span><strong>${selectedDatasets.join(", ") || "Instructor Custom"}</strong></div>
               <div class="kv-row"><span>Region</span><strong>${scenario.region}</strong></div>
             </div>
           `;
@@ -609,6 +832,7 @@ async function bindInstructorInteractions() {
         if (note) {
           note.textContent = "Preview generated from live instructor custom endpoint.";
         }
+        setInstructorWorkflowStep("build", true);
         showToast("Preview generated.", "success");
       } catch (error) {
         showToast(error.message, "error");
@@ -628,6 +852,7 @@ async function bindInstructorInteractions() {
       if (note) {
         note.textContent = "Assignment marked as published (UX flow ready; class roster API pending).";
       }
+      setInstructorWorkflowStep("publish", true);
       showToast("Published to class queue preview.", "success");
       publishBtn.textContent = idleText;
       publishBtn.disabled = false;
@@ -642,7 +867,9 @@ async function bindInstructorInteractions() {
         reviewList.className = "state-card empty";
         reviewList.innerHTML =
           "<h4>Submission List</h4><p>No evaluations submitted yet.</p>";
+        setInstructorWorkflowActive("build");
       } else {
+        setInstructorWorkflowActive("review");
         const top = reviews.slice(0, 6);
         reviewList.className = "state-card";
         reviewList.innerHTML = `
@@ -686,6 +913,7 @@ async function bindInstructorInteractions() {
                 notes: `Instructor final grade set to ${grade}.`
               })
             });
+            setInstructorWorkflowStep("final", true);
             showToast("Instructor assessment finalized.", "success");
             await bindInstructorInteractions();
           };
@@ -800,7 +1028,7 @@ async function runDashboardPage(expectedRole) {
   }
   const whoami = document.getElementById("whoami");
   if (whoami) {
-    whoami.textContent = `Signed in as ${currentUser.username} (${currentUser.role})`;
+    whoami.textContent = `Signed in as ${currentUser.username} (${formatRoleLabel(currentUser.role)})`;
   }
   if (loadingView) {
     loadingView.classList.add(loadingClass);
